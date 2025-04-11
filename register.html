@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .password-group {
+            position: relative;
+        }
+
+        .password-info {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+            cursor: help;
+            font-size: 1.2rem;
+        }
+
+        .password-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            display: none;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .password-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 20px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-left: 1px solid #e0e0e0;
+            border-top: 1px solid #e0e0e0;
+            transform: rotate(45deg);
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .requirement.valid {
+            color: #27ae60;
+        }
+
+        .requirement.valid::before {
+            content: "✓";
+            color: #27ae60;
+        }
+
+        .requirement.invalid {
+            color: #95a5a6;
+        }
+
+        .requirement.invalid::before {
+            content: "○";
+            color: #95a5a6;
+        }
+
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: #3498db;
+            border: none;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #2980b9;
+            color: white;
+        }
+
+        .btn-save {
+            background: #2ecc71;
+            border: none;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #e74c3c;
+            border: none;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #c0392b;
+            color: white;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .required {
+            color: #e74c3c;
+            margin-left: 0.25rem;
+        }
+
+        .language-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-input:checked {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+
+        .ui-datepicker {
+            font-size: 0.9rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .ui-datepicker .ui-datepicker-header {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .ui-datepicker .ui-datepicker-prev,
+        .ui-datepicker .ui-datepicker-next {
+            top: 2px;
+        }
+
+        .ui-datepicker .ui-datepicker-prev span,
+        .ui-datepicker .ui-datepicker-next span {
+            display: block;
+            position: absolute;
+            left: 50%;
+            margin-left: -8px;
+            top: 50%;
+            margin-top: -8px;
+        }
+
+        .ui-datepicker .ui-datepicker-prev-hover,
+        .ui-datepicker .ui-datepicker-next-hover {
+            top: 1px;
+        }
+
+        .ui-datepicker .ui-datepicker-title {
+            line-height: 1.8em;
+        }
+
+        .ui-datepicker select.ui-datepicker-month,
+        .ui-datepicker select.ui-datepicker-year {
+            width: 45%;
+            margin: 0 2%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1 class="form-title">회원가입</h1>
+            <form id="registerForm" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="userId" class="form-label">ID <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="userId" name="userId" required>
+                                <button type="button" class="btn btn-outline-secondary" id="idCheckBtn">중복확인</button>
+                            </div>
+                            <div class="error-message" id="userIdError"></div>
+                            <div class="id-available">사용 가능한 ID입니다.</div>
+                            <div class="id-unavailable">이미 사용 중인 ID입니다.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name" class="form-label">이름 <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="error-message" id="nameError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="password" class="form-label">비밀번호 <span class="required">*</span></label>
+                            <div class="password-group">
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <i class="bi bi-info-circle password-info" title="비밀번호 요구사항"></i>
+                                <div class="error-message" id="passwordError"></div>
+                                <div class="password-tooltip">
+                                    <div class="requirement invalid" id="uppercase">영문 대문자 2개 이상</div>
+                                    <div class="requirement invalid" id="lowercase">영문 소문자 2개 이상</div>
+                                    <div class="requirement invalid" id="number">숫자 2개 이상</div>
+                                    <div class="requirement invalid" id="special">특수문자 2개 이상</div>
+                                    <div class="requirement invalid" id="length">12자 이상</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">비밀번호 재확인 <span class="required">*</span></label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                            <div class="password-match">비밀번호가 일치합니다.</div>
+                            <div class="password-mismatch">비밀번호가 일치하지 않습니다.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email" class="form-label">이메일 <span class="required">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone" class="form-label">전화번호 <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="010-0000-0000" required>
+                            <div class="error-message" id="phoneError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">생년월일 <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="birthDate" name="birthDate" required readonly>
+                            <div class="error-message" id="birthdayError"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">성별 <span class="required">*</span></label>
+                            <select class="form-control" id="gender" name="gender" required>
+                                <option value="">선택</option>
+                                <option value="male">남성</option>
+                                <option value="female">여성</option>
+                            </select>
+                            <div class="error-message" id="genderError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="company" class="form-label">직장</label>
+                            <select class="form-control" id="company" name="company">
+                                <option value="">선택</option>
+                                <option value="naver">네이버</option>
+                                <option value="kakao">카카오</option>
+                                <option value="google">구글</option>
+                                <option value="meta">메타</option>
+                                <option value="samsung">삼성</option>
+                                <option value="coupang">쿠팡</option>
+                                <option value="tesla">테슬라</option>
+                                <option value="openai">OAI</option>
+                                <option value="anthropic">앤트로픽</option>
+                                <option value="xai">XAI</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="experience" class="form-label">개발 경력 (년) <span class="required">*</span></label>
+                            <input type="number" class="form-control" id="experience" name="experience" min="1" max="50" required>
+                            <div class="error-message" id="experienceError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">경험 프로그래밍 언어 <span class="required">*</span></label>
+                    <div class="language-options">
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="python" name="languages" value="python">
+                            <label class="form-check-label" for="python">Python</label>
+                        </div>
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="cpp" name="languages" value="cpp">
+                            <label class="form-check-label" for="cpp">C++</label>
+                        </div>
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="java" name="languages" value="java">
+                            <label class="form-check-label" for="java">Java</label>
+                        </div>
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="javascript" name="languages" value="javascript">
+                            <label class="form-check-label" for="javascript">JavaScript</label>
+                        </div>
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="typescript" name="languages" value="typescript">
+                            <label class="form-check-label" for="typescript">TypeScript</label>
+                        </div>
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="go" name="languages" value="go">
+                            <label class="form-check-label" for="go">Go</label>
+                        </div>
+                        <div class="language-option">
+                            <input class="form-check-input" type="checkbox" id="rust" name="languages" value="rust">
+                            <label class="form-check-label" for="rust">Rust</label>
+                        </div>
+                    </div>
+                    <div class="error-message" id="languagesError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="introduction" class="form-label">자기소개 (5줄 이내) <span class="required">*</span></label>
+                    <textarea class="form-control" id="introduction" name="introduction" maxlength="500" required></textarea>
+                    <div class="error-message" id="introductionError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="blog" class="form-label">개인 블로그/웹사이트 주소</label>
+                    <input type="url" class="form-control" id="blog" name="blog">
+                    <div class="error-message" id="blogError"></div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="submit" class="btn btn-custom btn-submit">제출</button>
+                    <button type="button" class="btn btn-custom btn-save" id="saveBtn">임시저장</button>
+                    <button type="button" class="btn btn-custom btn-cancel" id="cancelBtn">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Datepicker 설정
+            $('#birthDate').datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '1901:2025',
+                maxDate: new Date(),
+                showButtonPanel: true,
+                closeText: '닫기',
+                currentText: '오늘',
+                monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+                monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+                dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+                dayNamesShort: ['일','월','화','수','목','금','토'],
+                dayNamesMin: ['일','월','화','수','목','금','토'],
+                showMonthAfterYear: true,
+                yearSuffix: '년'
+            });
+
+            // 임시저장 기능
+            $('#saveBtn').click(function() {
+                const formData = $('#registerForm').serialize();
+                localStorage.setItem('tempFormData', formData);
+                alert('임시저장되었습니다.');
+            });
+
+            // 취소 기능
+            $('#cancelBtn').click(function() {
+                if(confirm('정말 취소하시겠습니까?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // ID 중복확인 기능
+            let isIdChecked = false;
+            let isIdAvailable = false;
+
+            // ID 입력 필드 변경 시 중복확인 상태 초기화
+            $('#userId').on('input', function() {
+                isIdChecked = false;
+                isIdAvailable = false;
+                $('.id-available, .id-unavailable').hide();
+                $('#idCheckBtn').prop('disabled', false);
+            });
+
+            // ID 중복확인 버튼 클릭
+            $('#idCheckBtn').click(function() {
+                const userId = $('#userId').val();
+                
+                if (!userId) {
+                    $('#userIdError').text('ID를 입력해주세요.').show();
+                    return;
+                }
+
+                // ID 형식 검사 (예: 영문자와 숫자만 허용, 4-20자)
+                const idRegex = /^[a-zA-Z0-9]{4,20}$/;
+                if (!idRegex.test(userId)) {
+                    $('#userIdError').text('ID는 영문자와 숫자로 4-20자 이내로 입력해주세요.').show();
+                    return;
+                }
+
+                // 중복확인 중 버튼 비활성화
+                $(this).prop('disabled', true);
+
+                // 서버에서 ID 중복확인
+                $.ajax({
+                    url: 'https://coconutparty.github.io/reg_members.json',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.userId === userId) {
+                            isIdAvailable = false;
+                            $('.id-available').hide();
+                            $('.id-unavailable').show();
+                            $('#userIdError').text('이미 사용 중인 ID입니다.').show();
+                        } else {
+                            isIdAvailable = true;
+                            $('.id-unavailable').hide();
+                            $('.id-available').show();
+                            $('#userIdError').hide();
+                        }
+                        isIdChecked = true;
+                        $('#idCheckBtn').prop('disabled', false);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#userIdError').text('ID 중복확인 중 오류가 발생했습니다.').show();
+                        $('#idCheckBtn').prop('disabled', false);
+                        console.error('Error:', error);
+                    }
+                });
+            });
+
+            // 비밀번호 복잡성 검사
+            function checkPasswordRequirements(password) {
+                const requirements = {
+                    uppercase: (password.match(/[A-Z]/g) || []).length >= 2,
+                    lowercase: (password.match(/[a-z]/g) || []).length >= 2,
+                    number: (password.match(/[0-9]/g) || []).length >= 2,
+                    special: (password.match(/[!@#$%^&*(),.?":{}|<>]/g) || []).length >= 2,
+                    length: password.length >= 12
+                };
+
+                Object.keys(requirements).forEach(key => {
+                    const element = $(`#${key}`);
+                    if (requirements[key]) {
+                        element.removeClass('invalid').addClass('valid');
+                    } else {
+                        element.removeClass('valid').addClass('invalid');
+                    }
+                });
+
+                return Object.values(requirements).every(Boolean);
+            }
+
+            // 비밀번호 입력 시 복잡성 검사
+            $('#password').on('input', function() {
+                const password = $(this).val();
+                checkPasswordRequirements(password);
+            });
+
+            // 비밀번호 일치 검사
+            $('#password, #confirmPassword').on('keyup', function() {
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+                
+                if (password && confirmPassword) {
+                    if (password === confirmPassword) {
+                        $('.password-match').show();
+                        $('.password-mismatch').hide();
+                        $('#confirmPasswordError').hide();
+                    } else {
+                        $('.password-match').hide();
+                        $('.password-mismatch').show();
+                        $('#confirmPasswordError').text('비밀번호가 일치하지 않습니다.').show();
+                    }
+                } else {
+                    $('.password-match').hide();
+                    $('.password-mismatch').hide();
+                    $('#confirmPasswordError').hide();
+                }
+            });
+
+            // 전화번호 자동 하이픈 삽입 및 형식 검사
+            $('#phone').on('input', function() {
+                let phone = $(this).val().replace(/[^0-9]/g, '');
+                
+                if (phone.length > 3 && phone.length <= 7) {
+                    phone = phone.slice(0, 3) + '-' + phone.slice(3);
+                } else if (phone.length > 7) {
+                    phone = phone.slice(0, 3) + '-' + phone.slice(3, 7) + '-' + phone.slice(7, 11);
+                }
+                
+                $(this).val(phone);
+            });
+
+            // 폼 제출 전 유효성 검사
+            $('#registerForm').submit(function(e) {
+                e.preventDefault();
+                let isValid = true;
+                $('.error-message').hide();
+
+                // ID 중복확인 검사
+                if (!isIdChecked) {
+                    $('#userIdError').text('ID 중복확인이 필요합니다.').show();
+                    isValid = false;
+                } else if (!isIdAvailable) {
+                    $('#userIdError').text('이미 사용 중인 ID입니다.').show();
+                    isValid = false;
+                }
+
+                // 필수 입력 필드 검사
+                const requiredFields = ['userId', 'password', 'confirmPassword', 'name', 'email', 'birthDate', 'gender', 'experience', 'introduction'];
+                requiredFields.forEach(field => {
+                    if (!$(`#${field}`).val()) {
+                        $(`#${field}Error`).text('이 필드는 필수입니다.').show();
+                        isValid = false;
+                    }
+                });
+
+                // 비밀번호 일치 검사
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+                if (password !== confirmPassword) {
+                    $('#confirmPasswordError').text('비밀번호가 일치하지 않습니다.').show();
+                    isValid = false;
+                }
+
+                // 비밀번호 복잡성 검사
+                if (!checkPasswordRequirements(password)) {
+                    $('#passwordError').text('비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 각각 2개 이상 포함하고 12자 이상이어야 합니다.').show();
+                    isValid = false;
+                }
+
+                // 프로그래밍 언어 선택 검사
+                if ($('input[name="languages"]:checked').length === 0) {
+                    $('#languagesError').text('최소 하나의 언어를 선택해야 합니다.').show();
+                    isValid = false;
+                }
+
+                // 이메일 형식 검사
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test($('#email').val())) {
+                    $('#emailError').text('올바른 이메일 형식이 아닙니다.').show();
+                    isValid = false;
+                }
+
+                // 개발 경력 검사
+                const experience = parseInt($('#experience').val());
+                if (experience < 1 || experience > 50) {
+                    $('#experienceError').text('개발 경력은 1년에서 50년 사이여야 합니다.').show();
+                    isValid = false;
+                }
+
+                // 전화번호 형식 검사
+                const phoneRegex = /^01[0-9]-[0-9]{3,4}-[0-9]{4}$/;
+                const phone = $('#phone').val();
+                if (!phoneRegex.test(phone)) {
+                    $('#phoneError').text('올바른 전화번호 형식이 아닙니다.').show();
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    // 폼 데이터 수집
+                    const formData = {
+                        userId: $('#userId').val(),
+                        name: $('#name').val(),
+                        password: CryptoJS.SHA256($('#password').val()).toString(),
+                        email: $('#email').val(),
+                        phone: $('#phone').val(),
+                        birthDate: $('#birthDate').val(),
+                        gender: $('#gender').val(),
+                        company: $('#company').val(),
+                        experience: $('#experience').val(),
+                        languages: $('input[name="languages"]:checked').map(function() {
+                            return $(this).val();
+                        }).get(),
+                        introduction: $('#introduction').val(),
+                        blog: $('#blog').val(),
+                        registrationDate: new Date().toISOString()
+                    };
+
+                    // 서버에 데이터 전송
+                    $.ajax({
+                        url: 'https://coconutparty.github.io/reg_members.json',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(formData),
+                        success: function(response) {
+                            alert('회원가입이 완료되었습니다.');
+                            window.location.href = 'index.html';
+                        },
+                        error: function(xhr, status, error) {
+                            alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+
+            // 임시저장된 데이터 불러오기
+            const savedData = localStorage.getItem('tempFormData');
+            if (savedData) {
+                const formData = new URLSearchParams(savedData);
+                formData.forEach((value, key) => {
+                    if (key === 'languages') {
+                        $(`input[name="languages"][value="${value}"]`).prop('checked', true);
+                    } else {
+                        $(`#${key}`).val(value);
+                    }
+                });
+            }
+
+            // 비밀번호 툴팁 표시/숨김
+            $('.password-info').hover(
+                function() {
+                    $('.password-tooltip').show();
+                },
+                function() {
+                    $('.password-tooltip').hide();
+                }
+            );
+
+            // 비밀번호 입력 필드 포커스 시 툴팁 표시
+            $('#password').focus(function() {
+                $('.password-tooltip').show();
+            }).blur(function() {
+                $('.password-tooltip').hide();
+            });
+        });
+    </script>
+</body>
+</html>
