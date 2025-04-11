@@ -1,0 +1,94 @@
+{
+    "members": [
+      {
+        "id": "user001",
+        "name": "김민준",
+        "phone": "010-1234-5678",
+        "email": "minjun.kim@example.com",
+        "age": 28,
+        "address": "서울시 강남구",
+        "joinDate": "2023-05-15"
+      },
+      {
+        "id": "user002",
+        "name": "이서연",
+        "phone": "010-2345-6789",
+        "email": "seoyeon.lee@example.com",
+        "age": 24,
+        "address": "서울시 마포구",
+        "joinDate": "2023-06-22"
+      },
+      {
+        "id": "user003",
+        "name": "박지훈",
+        "phone": "010-3456-7890",
+        "email": "jihoon.park@example.com",
+        "age": 32,
+        "address": "부산시 해운대구",
+        "joinDate": "2023-04-10"
+      },
+      {
+        "id": "user004",
+        "name": "최수아",
+        "phone": "010-4567-8901",
+        "email": "sua.choi@example.com",
+        "age": 26,
+        "address": "인천시 부평구",
+        "joinDate": "2023-07-05"
+      },
+      {
+        "id": "user005",
+        "name": "정도윤",
+        "phone": "010-5678-9012",
+        "email": "doyoon.jung@example.com",
+        "age": 30,
+        "address": "대구시 수성구",
+        "joinDate": "2023-03-18"
+      },
+      {
+        "id": "user006",
+        "name": "강하은",
+        "phone": "010-6789-0123",
+        "email": "haeun.kang@example.com",
+        "age": 22,
+        "address": "광주시 서구",
+        "joinDate": "2023-08-01"
+      },
+      {
+        "id": "user007",
+        "name": "윤지민",
+        "phone": "010-7890-1234",
+        "email": "jimin.yoon@example.com",
+        "age": 27,
+        "address": "대전시 유성구",
+        "joinDate": "2023-05-30"
+      },
+      {
+        "id": "user008",
+        "name": "임현우",
+        "phone": "010-8901-2345",
+        "email": "hyunwoo.lim@example.com",
+        "age": 35,
+        "address": "울산시 남구",
+        "joinDate": "2023-02-14"
+      },
+      {
+        "id": "user009",
+        "name": "송예린",
+        "phone": "010-9012-3456",
+        "email": "yerin.song@example.com",
+        "age": 29,
+        "address": "경기도 성남시",
+        "joinDate": "2023-04-25"
+      },
+      {
+        "id": "user010",
+        "name": "한주원",
+        "phone": "010-0123-4567",
+        "email": "joowon.han@example.com",
+        "age": 31,
+        "address": "경기도 수원시",
+        "joinDate": "2023-01-20"
+      }
+    ]
+  }
